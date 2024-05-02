@@ -93,3 +93,51 @@ def convert_to_tf_tensor(ds_entry):
     # the TF augmentation layers operates on batched inputs.
     ds_entry["image"] = tf.expand_dims(tf_image, 0)
     return ds_entry
+
+
+
+def preprocessing(ds_split, batch_size=1, input_shape=(224, 224, 3), train=False, shuffle_buffer_size=1000, grayscale=False):
+    # Convert values from int8 to float32
+    ds_split = ds_split.map(
+        cast_images_to_float32, num_parallel_calls=tf.data.AUTOTUNE
+    )
+
+    if train:
+        # Repeat indefinitely and shuffle the dataset
+        ds_split = ds_split.repeat().shuffle(shuffle_buffer_size)
+        # inception crop
+        ds_split = ds_split.map(
+            inception_crop, num_parallel_calls=tf.data.AUTOTUNE
+        )
+        # resize
+        resize_func = lambda ds_entry: resize(ds_entry, input_shape)
+        ds_split = ds_split.map(resize_func, num_parallel_calls=tf.data.AUTOTUNE)
+        # flip
+        ds_split = ds_split.map(
+            random_flip_lr, num_parallel_calls=tf.data.AUTOTUNE
+        )
+    else:
+        # resize small
+        resize_small_func = lambda ds_entry: resize_small(ds_entry, input_shape)
+        ds_split = ds_split.map(resize_small_func, num_parallel_calls=tf.data.AUTOTUNE)
+        # center crop
+        center_crop_func = lambda ds_entry: center_crop(ds_entry, input_shape)
+        ds_split = ds_split.map(center_crop_func, num_parallel_calls=tf.data.AUTOTUNE)
+        
+    if grayscale:
+        ds_split = ds_split.map(
+            grayscale, num_parallel_calls=tf.data.AUTOTUNE
+        )
+
+    # Use the official mobilenet preprocessing to normalize images
+    ds_split = ds_split.map(
+        mobilenet_preprocessing_wrapper, num_parallel_calls=tf.data.AUTOTUNE
+    )
+
+    # Convert each dataset entry from a dictionary to a tuple of (img, label) to be used by the keras API.
+    ds_split = ds_split.map(
+        prepare_supervised, num_parallel_calls=tf.data.AUTOTUNE
+    )
+
+    # Batch and prefetch the dataset for improved performance
+    return ds_split.batch(batch_size).prefetch(2)
