@@ -2,4 +2,5 @@ pandas
 keras>=3.3
 tensorflow
 tensorflow_datasets
+datasets[vision]
 jax
