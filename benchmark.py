@@ -222,5 +222,15 @@ if __name__ == "__main__":
     else:
         evals = ["wv", "vww", "distance", "miap", "lighting", "depiction"]
     
-    benchmark_suite(args.model_path, args.dataset_dir, dataset_type=args.dataset_type, evals=evals, model_name=args.model_name)
-     
+    result = benchmark_suite(
+        args.model_path,
+        args.dataset_dir,
+        dataset_type=args.dataset_type,
+        evals=evals,
+        model_name=args.model_name)
+    
+    if args.model_name:
+        model_name = args.model_name + "_"
+    else:
+        model_name = ""
+    result.to_csv(f"{model_name}benchmark_results.csv", index=False)
