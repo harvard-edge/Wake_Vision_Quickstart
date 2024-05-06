@@ -3,6 +3,11 @@
 ## What is Wake Vision?
 "Wake Vision" is a large, high-quality dataset featuring over 6 million images, significantly exceeding the scale and diversity of current tinyML datasets (100x). This dataset includes images with annotations of whether each image contains a person. Additionally, it incorporates a comprehensive fine-grained benchmark to assess fairness and robustness, covering perceived gender, perceived age, subject distance, lighting conditions, and depictions. Annotations are published under a CC BY 4.0 license, and all images are sourced from the Open Images v7 dataset under a CC BY 2.0 license.
 
+## Colab
+[Colab Link](https://colab.research.google.com/drive/1HC5lkBblrdRZ4vaT5M5061TKKep0MS-M?usp=sharing)
+
+We provide a Colab to quickly interact with the dataset without downloading anything. 
+
 ## Quickstart
 ### Install Requirements
 ```
