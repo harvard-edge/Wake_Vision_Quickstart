@@ -59,7 +59,7 @@ def distance_eval(model, ds):
 
     near_score = model.evaluate(pp_ops.preprocessing(distance_near, input_shape=input_shape), verbose=0)
     mid_score = model.evaluate(pp_ops.preprocessing(distance_mid, input_shape=input_shape), verbose=0)
-    far_score = model.evaluate(pp_ops.preprocessing(distance_far, input_shape=input_shape), verbose=0)
+    far_score = model.evaluate(pp_ops.preprocessing(distance_far, input_shape=input_shape, far_set=True), verbose=0)
     no_person_score = model.evaluate(pp_ops.preprocessing(no_person, input_shape=input_shape), verbose=0)
     
     near_f1 = f1(near_score[1], 1-no_person_score[1], 1-near_score[1])

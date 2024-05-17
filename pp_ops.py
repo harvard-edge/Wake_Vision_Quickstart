@@ -96,7 +96,12 @@ def convert_to_tf_tensor(ds_entry):
 
 
 
-def preprocessing(ds_split, batch_size=1, input_shape=(224, 224, 3), train=False, shuffle_buffer_size=1000, grayscale=False):
+def preprocessing(ds_split, batch_size=1, input_shape=(224, 224, 3), train=False, far_set=False, shuffle_buffer_size=1000, grayscale=False):
+    # Remove images that are in the far benchmark set but not in the stardard test set.
+    # They are labeled person = -1.
+    if not far_set:
+        ds_split = ds_split.filter(lambda x: x['person'] >= 0)
+    
     # Convert values from int8 to float32
     ds_split = ds_split.map(
         cast_images_to_float32, num_parallel_calls=tf.data.AUTOTUNE
@@ -138,6 +143,12 @@ def preprocessing(ds_split, batch_size=1, input_shape=(224, 224, 3), train=False
     ds_split = ds_split.map(
         prepare_supervised, num_parallel_calls=tf.data.AUTOTUNE
     )
-
+    
+    # If we are using the far set, we want to set the label to 1 since all the images are of people,
+    # and the 'person' is sometimes -1 due to being further away than is included in the test set.
+    if far_set:
+        ds_split = ds_split.map(
+            lambda image, label: (image, 1), num_parallel_calls=tf.data.AUTOTUNE
+        )
     # Batch and prefetch the dataset for improved performance
     return ds_split.batch(batch_size).prefetch(2)
