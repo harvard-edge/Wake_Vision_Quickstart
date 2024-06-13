@@ -1,4 +1,4 @@
-![Wake Vision Logo](https://lh3.googleusercontent.com/drive-viewer/AKGpihZmCfT3NUcUxIyKF659mna4Q9Xnz6xUtKs2eNw3ILvQcRG0RH4MGn5iKp7SHr0t9SlwovTgXkb09DOP5Klu3AFWjEd50FbbvNU=s2560)
+![Wake Vision Logo](WakeVisionLogo.png)
 
 # Wake Vision Quickstart
 [WakeVision.ai](https://wakevision.ai/)
